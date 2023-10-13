@@ -29,7 +29,7 @@ jobs:
     - name: Run my task
       run: |
         cd weibospider
-        python run_spider.py tweet_by_keyword
+        python run_spider.py follow
 
     - name: Debug Print current directory and its contents
       run: | 
