@@ -40,7 +40,7 @@ jobs:
       env: 
         DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
       run: |
-        export FILENAME=$(basename $(find . -name "tweet_spider_*.json" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" "))
+        export FILENAME=$(basename $(find . -name "tweet_spider_*.jsonl" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" "))
         echo "Attempting to upload file: $FILENAME"
         curl -X POST https://content.dropboxapi.com/2/files/upload \
           --header "Authorization: Bearer $DROPBOX_TOKEN" \
