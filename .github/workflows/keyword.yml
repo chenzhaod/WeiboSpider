@@ -2,7 +2,7 @@ name: run keyword tracker every hour
 
 on:
   schedule:
-    # Run every 3 hours
+    # Run every hour
     - cron: '0 * * * *'
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
     - name: Setup python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.6'
+        python-version: '3.6.7'
 
     - name: install python packages
       run: |
