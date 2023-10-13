@@ -1,8 +1,8 @@
-name: run keyword tracker every hour
+name: test
 
 on: 
   push:
-    paths: '.github/workflows/keyword.yml'
+    paths: '.github/workflows/test.yml'
   schedule:
     # Run every hour
     - cron: '0 * * * *'
