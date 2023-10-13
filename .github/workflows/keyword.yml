@@ -1,9 +1,9 @@
-name: run keyword tracker every three hours
+name: run keyword tracker every hour
 
 on:
   schedule:
     # Run every 3 hours
-    - cron: '0 */3 * * *'
+    - cron: '0 * * * *'
 
 jobs:
   build:
