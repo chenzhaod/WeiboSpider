@@ -35,16 +35,10 @@ jobs:
       env: 
         DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
       run: |
-        upload_endpoint="https://content.dropboxapi.com/2/files/upload"
-        find . -type f -mmin -5 | while IFS= read -r file; do
-          if [[ -r "$file" ]]; then  # Check if the file is readable
-            echo "Uploading $file to Dropbox..."
-            curl -X POST $upload_endpoint \
-              --header "Authorization: Bearer $DROPBOX_TOKEN" \
-              --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$(basename \"$file\")\",\"mode\": \"add\",\"autorename\": true,\"mute\": false,\"strict_conflict\": false}" \
-              --header "Content-Type: application/octet-stream" \
-              --data-binary @"$file"
-          else
-            echo "Cannot read $file. Skipping..."
-          fi
+        export FILENAME=$(find . -name "tweet_spider_*.jsonl" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" ")
+        curl -X POST https://content.dropboxapi.com/2/files/upload \
+          --header "Authorization: Bearer $DROPBOX_TOKEN" \
+          --header "Content-Type: application/octet-stream" \
+          --header "Dropbox-API-Arg: {\"path\": \"/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
+          --data-binary @"$FILENAME"
         done
