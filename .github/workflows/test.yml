@@ -31,20 +31,6 @@ jobs:
         cd weibospider
         python run_spider.py follow
 
-    - name: Dubug List Files
-      run: |
-        ls -R
-        find . -name "*.jsonl"
-
-    - name: Debug add permissions to the file
-      run: |
-        chmod +r $FILENAME
-
-    - name: Debug Verify file content
-      run: |
-        ls -lh $FILENAME
-        cat $FILENAME
-
     - name: Debug Print current directory and its contents
       run: | 
         pwd && ls -l 
@@ -60,4 +46,14 @@ jobs:
           --header "Content-Type: application/octet-stream" \
           --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
           --data-binary @"$FILENAME"
+
+    - name: Debug add permissions to the file
+      run: |
+        chmod +r $FILENAME
+
+    - name: Debug Verify file content
+      run: |
+        ls -lh $FILENAME
+        cat $FILENAME
+
 
