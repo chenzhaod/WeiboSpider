@@ -23,10 +23,14 @@ class TweetSpiderByKeyword(Spider):
         爬虫入口
         """
         # 这里keywords可替换成实际待采集的数据
-        keywords = ['丽江']
-        # 这里的时间可替换成实际需要的时间段
-        start_time = datetime.datetime(year=2022, month=10, day=1, hour=0)
-        end_time = datetime.datetime(year=2022, month=10, day=7, hour=23)
+        keywords = ['家暴']
+        # 只爬取过去一个小时（结束时间：当前时间；开始时间：一个小时前）
+        end_time = datetime.datetime.now(pytz.timezone("Asia/Shanghai"))
+        start_time = end_time - timedelta(hours=1)
+
+        # 自定义时间段：这里的时间可替换成实际需要的时间段
+        #start_time = datetime.datetime(year=2022, month=10, day=1, hour=0)
+        #end_time = datetime.datetime(year=2022, month=10, day=7, hour=23)
         # 是否按照小时进行切分，数据量更大; 对于非热门关键词**不需要**按照小时切分
         is_split_by_hour = True
         for keyword in keywords:
