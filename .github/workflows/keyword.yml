@@ -25,4 +25,5 @@ jobs:
 
     - name: Run my task
       run: |
-        run_spider.py tweet_by_keyword  
+        cd weibospider
+        python run_spider.py tweet_by_keyword  
