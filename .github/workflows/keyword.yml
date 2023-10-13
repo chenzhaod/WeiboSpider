@@ -30,3 +30,18 @@ jobs:
       run: |
         cd weibospider
         python run_spider.py tweet_by_keyword  
+
+    - name: Upload new output to Dropbox
+      env: 
+        dropbox_token: ${{ secrets.dropbox_token }}
+      run: 
+        upload_endpoint="https://content.dropboxapi.com/2/files/upload"
+
+        find . -type f -mmin -5 | while read -r file; do
+          echo "Uploading $file to Dropbox..."
+          curl -X POST $upload_endpoint \
+               --header "Authorization: Bearer ${dropbox_token}" \
+               --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$(basename "$file")\",\"mode\": \"add\",\"autorename\": true,\"mute\": false,\"strict_conflict\": false}" \
+               --header "Content-Type: application/octet-stream" \
+               --data-binary @"$file"
+        done
