@@ -1,6 +1,7 @@
 name: run keyword tracker every hour
 
 on:
+  push:
   schedule:
     # Run every hour
     - cron: '0 * * * *'
@@ -20,7 +21,6 @@ jobs:
 
     - name: install python packages
       run: |
-        cd WeiboSpider
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
