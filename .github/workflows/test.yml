@@ -29,7 +29,7 @@ jobs:
     - name: Run my task
       run: |
         cd weibospider
-        python run_spider.py follow
+        python run_spider.py fan
 
     - name: Debug Print current directory and its contents
       run: | 
@@ -40,20 +40,13 @@ jobs:
         DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
       run: |
         export FILENAME=$(basename $(find . -name "*.jsonl" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" "))
+        ls -lh $FILENAME
+        cat $FILENAME
         echo "Attempting to upload file: $FILENAME"
         curl -X POST https://content.dropboxapi.com/2/files/upload \
           --header "Authorization: Bearer $DROPBOX_TOKEN" \
           --header "Content-Type: application/octet-stream" \
           --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
           --data-binary @"$FILENAME"
-
-    - name: Debug add permissions to the file
-      run: |
-        chmod +r $FILENAME
-
-    - name: Debug Verify file content
-      run: |
-        ls -lh $FILENAME
-        cat $FILENAME
 
 
