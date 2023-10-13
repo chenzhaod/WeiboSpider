@@ -31,6 +31,11 @@ jobs:
         cd weibospider
         python run_spider.py tweet_by_keyword  
 
+    - name: Dubug List Files
+      run: |
+        ls -R
+        find . -name "*.jsonl"
+
     - name: Upload new output to Dropbox
       env: 
         DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
@@ -39,6 +44,6 @@ jobs:
         curl -X POST https://content.dropboxapi.com/2/files/upload \
           --header "Authorization: Bearer $DROPBOX_TOKEN" \
           --header "Content-Type: application/octet-stream" \
-          --header "Dropbox-API-Arg: {\"path\": \"/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
+          --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
           --data-binary @"$FILENAME"
-        done
+        
