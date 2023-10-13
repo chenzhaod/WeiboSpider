@@ -1,0 +1,26 @@
+name: Upload to Dropbox
+
+on: push
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create a simple test file
+      run: echo "This is a test file" > testfile.txt
+
+    - name: Upload to Dropbox
+      env:
+        DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
+      run: |
+        export FILENAME="testfile.txt"
+        curl -X POST https://content.dropboxapi.com/2/files/upload \
+            --header "Authorization: Bearer $DROPBOX_TOKEN" \
+            --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
+            --header "Content-Type: application/octet-stream" \
+            --data-binary @$FILENAME
+
