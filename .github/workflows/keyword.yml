@@ -33,7 +33,7 @@ jobs:
 
     - name: Dubug List Files
       run: |
-        pwd && ls -l 
+        pwd && ls -l
 
     - name: Upload new output to Dropbox
       env: 
