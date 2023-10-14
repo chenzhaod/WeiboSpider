@@ -33,18 +33,21 @@ jobs:
 
     - name: Dubug List Files
       run: |
-        ls -R
-        find . -name "*.jsonl"
+        pwd && ls -l 
 
     - name: Upload new output to Dropbox
       env: 
         DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
       run: |
-        export FILENAME=$(basename $(find . -name "tweet_spider_*.jsonl" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" "))
-        echo "Attempting to upload file: $FILENAME"
-        curl -X POST https://content.dropboxapi.com/2/files/upload \
-          --header "Authorization: Bearer $DROPBOX_TOKEN" \
-          --header "Content-Type: application/octet-stream" \
-          --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
-          --data-binary @"$FILENAME"
+        for file in output/*; do
+          if [ -f "$file" ]; then
+            FILENAME=$(basename $file)
+            echo "Attempting to upload file: $FILENAME"
+            curl -X POST https://content.dropboxapi.com/2/files/upload \
+              --header "Authorization: Bearer $DROPBOX_TOKEN" \
+              --header "Content-Type: application/octet-stream" \
+              --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
+              --data-binary @"$file"
+          fi
+        done
        
