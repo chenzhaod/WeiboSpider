@@ -1,7 +1,7 @@
 name: run keyword tracker every hour
 
 on: 
-  workflow_dispatch:  # Allows you to manually trigger the workflow from the GitHub UI
+  push:  
   schedule:
     # Run every hour
     - cron: '0 * * * *'
@@ -41,6 +41,7 @@ jobs:
             ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
             # Optionally update the DROPBOX_REFRESH_TOKEN secret here if Dropbox provides a new refresh token.
+            # NEW_REFRESH_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.refresh_token')
         else
             echo "Token is still valid!" >> $GITHUB_ENV
         fi
