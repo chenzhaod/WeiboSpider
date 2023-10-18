@@ -1,8 +1,7 @@
 name: run keyword tracker every hour
 
 on: 
-  push:
-    paths: '.github/workflows/keyword.yml'
+  workflow_dispatch:  # Allows you to manually trigger the workflow from the GitHub UI
   schedule:
     # Run every hour
     - cron: '0 * * * *'
@@ -26,6 +25,26 @@ jobs:
         pip install -r requirements.txt
         pip install pytz
 
+    - name: check and possibly refresh dropbox token
+      run: |
+        TOKEN_VALIDITY=$(curl -X POST https://api.dropboxapi.com/2/users/get_current_account \
+          --header "Authorization: Bearer ${{ secrets.DROPBOX_TOKEN }}" \
+          --write-out "%{http_code}" --silent --output /dev/null)
+          
+        if [ "$TOKEN_VALIDITY" -ne 200 ]; then
+            echo "Token is invalid or expired. Refreshing..."
+            TOKEN_RESPONSE=$(curl -X POST https://api.dropboxapi.com/oauth2/token \
+              -d grant_type=refresh_token \
+              -d refresh_token=${{ secrets.DROPBOX_REFRESH_TOKEN }} \
+              -u ${{ secrets.DROPBOX_APP_KEY }}:${{ secrets.DROPBOX_APP_SECRET }})
+              
+            ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
+            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+            # Optionally update the DROPBOX_REFRESH_TOKEN secret here if Dropbox provides a new refresh token.
+        else
+            echo "Token is still valid!" >> $GITHUB_ENV
+        fi
+
     - name: Run my task
       run: |
         cd weibospider
@@ -37,7 +56,7 @@ jobs:
 
     - name: Upload new output to Dropbox
       env: 
-        DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
+        DROPBOX_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
         for file in output/*; do
           if [ -f "$file" ]; then
