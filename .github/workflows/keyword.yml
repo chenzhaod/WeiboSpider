@@ -38,8 +38,8 @@ jobs:
               -d refresh_token=${{ secrets.DROPBOX_REFRESH_TOKEN }} \
               -u ${{ secrets.DROPBOX_APP_KEY }}:${{ secrets.DROPBOX_APP_SECRET }})
               
-            ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
-            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+            export ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
+            echo "New token starts with: ${ACCESS_TOKEN:0:8}..."
             # Optionally update the DROPBOX_REFRESH_TOKEN secret here if Dropbox provides a new refresh token.
             # NEW_REFRESH_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.refresh_token')
         else
@@ -57,7 +57,7 @@ jobs:
 
     - name: Upload new output to Dropbox
       env: 
-        DROPBOX_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        DROPBOX_TOKEN: $ACCESS_TOKEN
       run: |
         for file in output/*; do
           if [ -f "$file" ]; then
