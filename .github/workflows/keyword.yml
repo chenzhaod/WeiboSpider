@@ -39,7 +39,7 @@ jobs:
               -u ${{ secrets.DROPBOX_APP_KEY }}:${{ secrets.DROPBOX_APP_SECRET }})
               
             export ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
-            echo "New token starts with: ${ACCESS_TOKEN:0:8}..."
+            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
             # Optionally update the DROPBOX_REFRESH_TOKEN secret here if Dropbox provides a new refresh token.
             # NEW_REFRESH_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.refresh_token')
         else
