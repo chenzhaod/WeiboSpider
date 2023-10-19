@@ -44,6 +44,7 @@ jobs:
             # NEW_REFRESH_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.refresh_token')
         else
             echo "Token is still valid!"
+            ACCESS_TOKEN=${{ secrets.DROPBOX_TOKEN }} >> $GITHUB_ENV
         fi
 
     - name: Run my task
@@ -57,7 +58,7 @@ jobs:
 
     - name: Upload new output to Dropbox
       env: 
-        DROPBOX_TOKEN: $ACCESS_TOKEN
+        DROPBOX_TOKEN: ${{ env.ACCESS_TOKEN }}
       run: |
         for file in output/*; do
           if [ -f "$file" ]; then
