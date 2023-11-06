@@ -83,11 +83,12 @@ def parse_user_info(data):
     return user
 
 
-def parse_tweet_info(data):
+def parse_tweet_info(data, original_tweet_id=None): # added original tweet id, 20231106
     """
     解析推文数据
     """
     tweet = {
+        "original_tweet_id": original_tweet_id, # added original tweet id, 20231106
         "_id": str(data['mid']),
         "mblogid": data['mblogid'],
         "created_at": parse_time(data['created_at']),

@@ -22,11 +22,12 @@ class RepostSpider(Spider):
         爬虫入口
         """
         # 这里tweet_ids可替换成实际待采集的数据
-        tweet_ids = ['Mb15BDYR0']
+        tweet_ids = ['Mb15BDYR0', 'NqFOnyXEg']
         for tweet_id in tweet_ids:
             mid = url_to_mid(tweet_id)
             url = f"https://weibo.com/ajax/statuses/repostTimeline?id={mid}&page=1&moduleID=feed&count=10"
-            yield Request(url, callback=self.parse, meta={'page_num': 1, 'mid': mid})
+            yield Request(url, callback=self.parse, meta={'page_num': 1, 'mid': mid, 'original_tweet_id': tweet_id})
+            # added original_tweet_id as metadata, 20231106
 
     def parse(self, response, **kwargs):
         """
@@ -34,10 +35,10 @@ class RepostSpider(Spider):
         """
         data = json.loads(response.text)
         for tweet in data['data']:
-            item = parse_tweet_info(tweet)
+            item = parse_tweet_info(tweet, original_tweet_id=response.meta['original_tweet_id']) # added original_tweet_id, 20231106
             yield item
         if data['data']:
-            mid, page_num = response.meta['mid'], response.meta['page_num']
+            mid, page_num, original_tweet_id = response.meta['mid'], response.meta['page_num'], response.meta['original_tweet_id'] # added original tweet id, 20231106
             page_num += 1
             url = f"https://weibo.com/ajax/statuses/repostTimeline?id={mid}&page={page_num}&moduleID=feed&count=10"
-            yield Request(url, callback=self.parse, meta={'page_num': page_num, 'mid': mid})
+            yield Request(url, callback=self.parse, meta={'page_num': page_num, 'mid': mid, 'original_tweet_id': original_tweet_id}) # added original tweet id, 20231106
