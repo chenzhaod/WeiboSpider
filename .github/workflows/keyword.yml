@@ -27,24 +27,31 @@ jobs:
 
     - name: check and possibly refresh dropbox token
       run: |
+        # Default to the stored secret token
+        ACCESS_TOKEN=${{ secrets.DROPBOX_TOKEN }}
+
+        # Check token validty
         TOKEN_VALIDITY=$(curl -X POST https://api.dropboxapi.com/2/users/get_current_account \
-          --header "Authorization: Bearer ${{ secrets.DROPBOX_TOKEN }}" \
+          --header "Authorization: Bearer $ACCESS_TOKEN" \
           --write-out "%{http_code}" --silent --output /dev/null)
-          
+
+        # If token is not valid, adjust as needed
         if [ "$TOKEN_VALIDITY" -ne 200 ]; then
             echo "Token is invalid or expired. Refreshing..."
             TOKEN_RESPONSE=$(curl -X POST https://api.dropboxapi.com/oauth2/token \
               -d grant_type=refresh_token \
               -d refresh_token=${{ secrets.DROPBOX_REFRESH_TOKEN }} \
               -u ${{ secrets.DROPBOX_APP_KEY }}:${{ secrets.DROPBOX_APP_SECRET }})
-              
+
+            # Extract the new access token
             ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
-            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
-            # Optionally update the DROPBOX_REFRESH_TOKEN secret here if Dropbox provides a new refresh token.
-            # NEW_REFRESH_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.refresh_token')
+        # otherwise, keep the default
         else
-            echo "Token is still valid!" >> $GITHUB_ENV
+            echo "Token is still valid!"
         fi
+
+        # Export the token to the env for subsequent steps
+            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
     - name: Run my task
       run: |
@@ -57,7 +64,7 @@ jobs:
 
     - name: Upload new output to Dropbox
       env: 
-        DROPBOX_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        DROPBOX_TOKEN: ${{ env.ACCESS_TOKEN }}
       run: |
         for file in output/*; do
           if [ -f "$file" ]; then
