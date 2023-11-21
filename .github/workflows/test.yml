@@ -54,12 +54,14 @@ jobs:
         # Export the token to the env for subsequent steps
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-    - name: Run my task
+    - name: Run keyword spider
       run: |
         cd weibospider
         python run_spider.py tweet_by_keyword
+
+    - name: Run renaming and logging file
+      run: |
         python keyword_rename_and_log_output.py
 
-        done
 
 
