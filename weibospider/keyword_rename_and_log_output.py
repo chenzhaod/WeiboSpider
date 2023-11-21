@@ -154,7 +154,7 @@ def rename_output_file(dbx,
     return data_file_name if found_file else None
 
 if __name__ == "__main__":
-    access_token = ('sl.BqTpRn_xJK-wo6YWped4itwEzmfwFLgd8HW3hp-kxj7mb44NKCkuKjM9lojKLgtM6iNYEp7RSwbEo096wdT1zA_OQrK94KTc5m2ZdV4aSsFEUhN-9KzFB7CTd0DhalaBsMf0QYqTJeeH')
+    access_token = os.environ.get('DROPBOX_TOKEN')
     if not access_token:
         print("Dropbox access token not found.")
         exit(1)
