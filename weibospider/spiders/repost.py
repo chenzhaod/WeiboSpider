@@ -21,8 +21,15 @@ class RepostSpider(Spider):
         """
         爬虫入口
         """
+        # Relative path to the ID list file, 20231117
+        file_path = '../data/combined_post_ids.txt'
+
+        # open and read the ID list, 20231117
+        with open(file_path, 'r') as file:
+            tweet_ids = [line.strip() for line in file]
+
         # 这里tweet_ids可替换成实际待采集的数据
-        tweet_ids = ['Mb15BDYR0', 'NqFOnyXEg']
+        #tweet_ids = ['Mb15BDYR0']
         for tweet_id in tweet_ids:
             mid = url_to_mid(tweet_id)
             url = f"https://weibo.com/ajax/statuses/repostTimeline?id={mid}&page=1&moduleID=feed&count=10"
