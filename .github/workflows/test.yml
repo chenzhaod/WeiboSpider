@@ -61,6 +61,7 @@ jobs:
 
     - name: Run renaming and logging file
       run: |
+        cd weibospider
         python keyword_rename_and_log_output.py
 
 
