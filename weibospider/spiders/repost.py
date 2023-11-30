@@ -26,7 +26,7 @@ class RepostSpider(Spider):
         爬虫入口
         """
         # Dropbox API token
-        dbx_token = ('sl.Bq3Yo7N1nmGJK5-0DWKhgE4PLsRxAJIq77W23KCmT45Ms874c4eKkO0H2SVKnAHGUeYTYQapxVob8wt_4Qkgzex2hzZF1LOcNe-h39aYLfA3DWKfb8Lwhlf3tcH9OpsnDdC6cJMF6b_s')
+        dbx_token = os.environ.get('ACCESS_TOKEN')
         dbx_path = '/Dissertation/weibo_data/records_and_logs/combined_post_ids.txt'
 
         # Connect to Dropbox
