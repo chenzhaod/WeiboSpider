@@ -6,9 +6,13 @@ Mail: nghuyong@163.com
 Created Time: 2020/4/14
 """
 import json
+import os
+
 from scrapy import Spider
 from scrapy.http import Request
 from spiders.common import parse_tweet_info, url_to_mid
+import dropbox
+import tempfile
 
 
 class RepostSpider(Spider):
@@ -21,12 +25,25 @@ class RepostSpider(Spider):
         """
         爬虫入口
         """
-        # Relative path to the ID list file, 20231117
-        file_path = '../data/combined_post_ids.txt'
+        # Dropbox API token
+        dbx_token = ('sl.Bq3Yo7N1nmGJK5-0DWKhgE4PLsRxAJIq77W23KCmT45Ms874c4eKkO0H2SVKnAHGUeYTYQapxVob8wt_4Qkgzex2hzZF1LOcNe-h39aYLfA3DWKfb8Lwhlf3tcH9OpsnDdC6cJMF6b_s')
+        dbx_path = '/Dissertation/weibo_data/records_and_logs/combined_post_ids.txt'
 
-        # open and read the ID list, 20231117
-        with open(file_path, 'r') as file:
-            tweet_ids = [line.strip() for line in file]
+        # Connect to Dropbox
+        dbx = dropbox.Dropbox(dbx_token)
+
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
+            # Download the file from Dropbox
+            _, res = dbx.files_download(dbx_path)
+            temp_file.write(res.content.decode('utf-8'))
+            temp_file.seek(0) # Go back to the beginning of the file
+
+            # Read the ID list from the temporary file
+            tweet_ids = [line.strip() for line in temp_file]
+
+        # Delete the temporary file
+        os.remove(temp_file.name)
 
         # 这里tweet_ids可替换成实际待采集的数据
         #tweet_ids = ['Mb15BDYR0']

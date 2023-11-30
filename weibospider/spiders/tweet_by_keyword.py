@@ -25,7 +25,7 @@ class TweetSpiderByKeyword(Spider):
         爬虫入口
         """
         # 这里keywords可替换成实际待采集的数据
-        keywords = ['性骚扰']
+        keywords = ['家暴', '性骚扰']
         # 只爬取过去一个小时（结束时间：当前时间；开始时间：一个小时前）
         end_time = datetime.datetime.now(pytz.timezone("Asia/Shanghai"))
         start_time = end_time - timedelta(hours=1)
