@@ -2,7 +2,6 @@ name: test
 
 on: 
   push:
-    paths: '.github/workflows/test.yml'
   schedule:
     # Run every hour
     - cron: '0 * * * *'
@@ -25,30 +24,45 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytz
+        pip install dropbox
 
-    - name: Run my task
+    - name: check and possibly refresh dropbox token
+      run: |
+        # Default to the stored secret token
+        ACCESS_TOKEN=${{ secrets.DROPBOX_TOKEN }}
+
+        # Check token validty
+        TOKEN_VALIDITY=$(curl -X POST https://api.dropboxapi.com/2/users/get_current_account \
+          --header "Authorization: Bearer $ACCESS_TOKEN" \
+          --write-out "%{http_code}" --silent --output /dev/null)
+
+        # If token is not valid, adjust as needed
+        if [ "$TOKEN_VALIDITY" -ne 200 ]; then
+            echo "Token is invalid or expired. Refreshing..."
+            TOKEN_RESPONSE=$(curl -X POST https://api.dropboxapi.com/oauth2/token \
+              -d grant_type=refresh_token \
+              -d refresh_token=${{ secrets.DROPBOX_REFRESH_TOKEN }} \
+              -u ${{ secrets.DROPBOX_APP_KEY }}:${{ secrets.DROPBOX_APP_SECRET }})
+
+            # Extract the new access token
+            ACCESS_TOKEN=$(echo $TOKEN_RESPONSE | jq -r '.access_token')
+        # otherwise, keep the default
+        else
+            echo "Token is still valid!"
+        fi
+
+        # Export the token to the env for subsequent steps
+            echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+    - name: Run keyword spider
       run: |
         cd weibospider
-        python run_spider.py follow
+        python run_spider.py tweet_by_keyword
 
-    - name: Debug Print current directory and its contents
-      run: | 
-        pwd && ls -l 
-      
-    - name: Upload new output to Dropbox
-      env: 
-        DROPBOX_TOKEN: ${{ secrets.DROPBOX_TOKEN }}
+    - name: Run renaming and logging file
       run: |
-        for file in output/*; do
-          if [ -f "$file" ]; then
-            FILENAME=$(basename $file)
-            echo "Attempting to upload file: $FILENAME"
-            curl -X POST https://content.dropboxapi.com/2/files/upload \
-              --header "Authorization: Bearer $DROPBOX_TOKEN" \
-              --header "Content-Type: application/octet-stream" \
-              --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
-              --data-binary @"$file"
-          fi
-        done
+        cd weibospider
+        python keyword_rename_and_log_output.py
+
 
 
