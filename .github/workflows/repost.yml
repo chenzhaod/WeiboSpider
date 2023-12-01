@@ -1,9 +1,9 @@
-name: keyword
+name: repost
 
 on: 
   schedule:
-    # Run every hour
-    - cron: '0 * * * *'
+    # Run at 15 minutes past every hour
+    - cron: '15 * * * *'
 
 jobs:
   build:
@@ -53,14 +53,9 @@ jobs:
         # Export the token to the env for subsequent steps
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-    - name: Run keyword spider
+    - name: Run tasks
       run: |
         cd weibospider
-        python run_spider.py tweet_by_keyword
-
-    - name: Run renaming and logging file
-      run: |
-        cd weibospider
-        python keyword_rename_and_log_output.py
-
-       
+        python determine_groups_generate_id_list.py
+        python run_spider.py repost
+        python repost_rename_and_log_output.py
