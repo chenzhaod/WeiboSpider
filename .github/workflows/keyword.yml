@@ -1,7 +1,6 @@
 name: keyword
 
 on: 
-  push:
   schedule:
     # Run every hour
     - cron: '0 * * * *'
