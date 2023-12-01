@@ -54,9 +54,17 @@ jobs:
         # Export the token to the env for subsequent steps
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-    - name: Run tasks
+    - name: Determine groups
       run: |
         cd weibospider
         python determine_groups_generate_id_list.py
+
+    - name: Run repost spider
+      run: |
+        cd weibospider
         python run_spider.py repost
+
+    - name: Rename and log
+      run: |
+        cd weibospider
         python repost_rename_and_log_output.py
