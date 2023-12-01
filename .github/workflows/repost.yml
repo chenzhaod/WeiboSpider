@@ -2,8 +2,8 @@ name: repost
 
 on: 
   schedule:
-    # Run at 15 minutes past every hour
-    - cron: '15 * * * *'
+    # Run every six hours
+    - cron: '0 */6 * * *'
 
 jobs:
   build:
