@@ -43,7 +43,7 @@ def write_file_to_dropbox(dbx, file_path, content):
 
 def get_groups_to_track(dbx,
                         log_file_path="/Dissertation/weibo_data/records_and_logs/keyword_output_log.json",
-                        tracking_window_hours=48):
+                        tracking_window_hours=24):
     """
     Determines which groups to track based on the creation time in keyword_output_file_log.json
     :param dbx: Dropbox client instance.
