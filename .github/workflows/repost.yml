@@ -1,10 +1,9 @@
 name: repost
 
 on: 
-  push:
   schedule:
-    # Run every hour
-    - cron: '0 * * * *'
+    # Run at 15 minutes past every hour
+    - cron: '15 * * * *'
 
 jobs:
   build:
@@ -54,7 +53,7 @@ jobs:
         # Export the token to the env for subsequent steps
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-    - name: Determine groups
+    - name: Run tasks
       run: |
         cd weibospider
         python determine_groups_generate_id_list.py
