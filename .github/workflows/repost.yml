@@ -58,13 +58,5 @@ jobs:
       run: |
         cd weibospider
         python determine_groups_generate_id_list.py
-
-    - name: Run repost spider
-      run: |
-        cd weibospider
         python run_spider.py repost
-
-    - name: Rename and log
-      run: |
-        cd weibospider
         python repost_rename_and_log_output.py
