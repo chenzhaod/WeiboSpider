@@ -1,7 +1,7 @@
-name: run keyword tracker every hour
+name: keyword
 
 on: 
-  push:  
+  push:
   schedule:
     # Run every hour
     - cron: '0 * * * *'
@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytz
+        pip install dropbox
 
     - name: check and possibly refresh dropbox token
       run: |
@@ -53,28 +54,14 @@ jobs:
         # Export the token to the env for subsequent steps
             echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-    - name: Run my task
+    - name: Run keyword spider
       run: |
         cd weibospider
-        python run_spider.py tweet_by_keyword  
+        python run_spider.py tweet_by_keyword
 
-    - name: Dubug List Files
+    - name: Run renaming and logging file
       run: |
-        pwd && ls -l
+        cd weibospider
+        python keyword_rename_and_log_output.py
 
-    - name: Upload new output to Dropbox
-      env: 
-        DROPBOX_TOKEN: ${{ env.ACCESS_TOKEN }}
-      run: |
-        for file in output/*; do
-          if [ -f "$file" ]; then
-            FILENAME=$(basename $file)
-            echo "Attempting to upload file: $FILENAME"
-            curl -X POST https://content.dropboxapi.com/2/files/upload \
-              --header "Authorization: Bearer $DROPBOX_TOKEN" \
-              --header "Content-Type: application/octet-stream" \
-              --header "Dropbox-API-Arg: {\"path\": \"/Dissertation/weibo_data/$FILENAME\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}" \
-              --data-binary @"$file"
-          fi
-        done
        
