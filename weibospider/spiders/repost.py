@@ -11,8 +11,8 @@ import os
 from scrapy import Spider
 from scrapy.http import Request
 from spiders.common import parse_tweet_info, url_to_mid
-import dropbox
-import tempfile
+import dropbox # add 11/30/2023
+import tempfile # add 11/30/2023
 
 
 class RepostSpider(Spider):
@@ -25,24 +25,24 @@ class RepostSpider(Spider):
         """
         爬虫入口
         """
-        # Dropbox API token
+        # Dropbox API token (add 11/30/2023)
         dbx_token = os.environ.get('ACCESS_TOKEN')
         dbx_path = '/Dissertation/weibo_data/records_and_logs/combined_post_ids.txt'
 
-        # Connect to Dropbox
+        # Connect to Dropbox (add 11/30/2023)
         dbx = dropbox.Dropbox(dbx_token)
 
-        # Create a temporary file
+        # Create a temporary file (add 11/30/2023)
         with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
             # Download the file from Dropbox
             _, res = dbx.files_download(dbx_path)
             temp_file.write(res.content.decode('utf-8'))
             temp_file.seek(0) # Go back to the beginning of the file
 
-            # Read the ID list from the temporary file
+            # Read the ID list from the temporary file (add 11/30/2023)
             tweet_ids = [line.strip() for line in temp_file]
 
-        # Delete the temporary file
+        # Delete the temporary file (add 11/30/2023)
         os.remove(temp_file.name)
 
         # 这里tweet_ids可替换成实际待采集的数据
