@@ -4,6 +4,7 @@
 Author: rightyonghu
 Created Time: 2022/10/22
 """
+
 import datetime
 from datetime import timedelta # added
 import pytz # added
@@ -13,6 +14,7 @@ from scrapy import Spider, Request
 from spiders.common import parse_tweet_info, parse_long_tweet
 
 
+
 class TweetSpiderByKeyword(Spider):
     """
     关键词搜索采集
@@ -20,12 +22,14 @@ class TweetSpiderByKeyword(Spider):
     name = "tweet_spider_by_keyword"
     base_url = "https://s.weibo.com/"
 
+
     def start_requests(self):
         """
         爬虫入口
         """
         # 这里keywords可替换成实际待采集的数据
-        keywords = ['家暴', '性骚扰']
+        keywords = ['家暴', '家庭暴力', '性骚扰', '猥亵', '性犯罪', '性别暴力', '咸猪手', '殴打 妻子', '殴打 女子',
+                    '摸大腿', '殴打 女生', '男子 殴打', '性侵', '女子 遭', '遭受 丈夫', '丈夫 殴打']
         # 只爬取过去一个小时（结束时间：当前时间；开始时间：一个小时前）
         end_time = datetime.datetime.now(pytz.timezone("Asia/Shanghai"))
         start_time = end_time - timedelta(hours=1)
